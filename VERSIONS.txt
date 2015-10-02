@@ -1,4 +1,4 @@
-Version NEXT [Not Released]
+Version 0.8.2 [September 30, 2015]
 ****************************************************************************************************
 - fixed compositeOperation value in DisplayProps.setValues (thanks @fumio)
 - documentation updates
