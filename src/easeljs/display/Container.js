@@ -89,6 +89,22 @@ this.createjs = this.createjs||{};
 		 * @default true
 		 **/
 		this.tickChildren = true;
+		
+		/**
+		 * If true the container is not blinking.
+		 * @property blinking
+		 * @type Boolean
+		 * @default false
+		 **/
+		this.blinking = false;
+		
+		/**
+		 * This is the default time between show/hide in miliseconds.
+		 * @property blinkTime
+		 * @type Number
+		 * @default 500
+		 **/
+    		this.blinkTime = 500;
 	}
 	var p = createjs.extend(Container, createjs.DisplayObject);
 	
@@ -541,6 +557,27 @@ this.createjs = this.createjs||{};
 	p.toString = function() {
 		return "[Container (name="+  this.name +")]";
 	};
+	
+	/**
+	 *
+	 * @method blink
+	 * @param {Boolean} state If true the container will blink, if not it will stop blinking. 
+	 * @param {Number} time This is the time in miliseconds between hide/show operations
+	 **/
+    	p.blink = function (state, time) {
+        	if (!state) {
+            		this.blinking = false;
+            		this.removeAllEventListeners("blink");
+            		this.visible = true;
+        	} else {
+            		if (!this.hasEventListener("blink")) {
+                		this.blinkTime = time;
+                		this.blinking = true;
+                		this.on("blink", this._blinkTick, this, false);
+                		this.dispatchEvent("blink");
+            		}
+        	}
+    	};
 
 
 // private methods:
@@ -684,6 +721,18 @@ this.createjs = this.createjs||{};
 		}
 		return rect;
 	};
+	
+	/**
+	 * @method _blinkTick
+	 * @protected
+	 **/
+	p._blinkTick = function () {
+        	this.visible = !this.visible;
+        	var scope = this;
+        	setTimeout(function (evt) {
+            		scope.dispatchEvent("blink");
+        	}, this.blinkTime);
+    	};
 
 
 	createjs.Container = createjs.promote(Container, "DisplayObject");
